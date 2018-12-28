@@ -8,9 +8,38 @@ const browser = await puppeteer.launch({headless: true,
     '--no-sandbox'
   ]});
 const page = await browser.newPage();
-await page.setViewport({ width: 1920, height: 926});
+await page.setViewport({ width: 1920, height: 926}); 
 await page.goto(url);
-await page.screenshot({path: 'example.png'});
+// await page.screenshot({path: 'example.png'});
+
+
+// Get hotel details
+let hotelData = await page.evaluate(() => {
+  let hotels = [];
+// get the hotel elements
+
+let hotelsElms = document.querySelectorAll('div.sr_property_block[data-hotelid]');
+hotelsElms.forEach((hotelelement) => {
+  let hotelJson = {};
+
+  try {
+    // hotelJson.name = hotelelement.querySelector('span.sr-hotel__name').innerText;
+    hotelJson.reviews = hotelelement.querySelector('bui-review-score__title').innerText;
+    // hotelJson.rating = hotelelement.querySelector('span.review-bui-review-score__badge-badge').innerText;
+    // if(hotelelement.querySelector('#hotellist_inner > div > div.sr_item_content.sr_item_content_slider_wrapper > div.sr_rooms_table_block.clearfix > div > table > tbody > tr > td.roomPrice.sr_discount > div > strong')){
+    //   hotelJson.price = hotelelement.querySelector('#hotellist_inner > div > div.sr_item_content.sr_item_content_slider_wrapper > div.sr_rooms_table_block.clearfix > div > table > tbody > tr > td.roomPrice.sr_discount > div > strong').innerText;
+    // }
+  }
+  catch (exception){
+
+  }
+  hotels.push(hotelJson);  
+
+
+  });
+  return hotels
+});
+console.log(hotelData);
 
 await page.close();
 await browser.close();
